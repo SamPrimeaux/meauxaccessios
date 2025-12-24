@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discover & Deploy • Meauxbility</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg0: #070A0F;
+      --bg1: #0B1020;
+      --panel: rgba(255, 255, 255, .06);
+      --stroke: rgba(255, 255, 255, .12);
+      --text: rgba(255, 255, 255, .92);
+      --muted: rgba(255, 255, 255, .64);
+      --cyan: #6EC7FF;
+      --teal: #4AECDC;
+      --navW: 268px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(110, 199, 255, .16), transparent 60%),
+        radial-gradient(900px 520px at 80% 0%, rgba(74, 236, 220, .14), transparent 62%),
+        radial-gradient(1200px 720px at 50% 85%, rgba(255, 107, 53, .08), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body:before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 8% 22%, rgba(255, 255, 255, .20) 50%, transparent 52%),
+        radial-gradient(1px 1px at 17% 68%, rgba(255, 255, 255, .18) 50%, transparent 52%),
+        radial-gradient(1px 1px at 32% 38%, rgba(255, 255, 255, .16) 50%, transparent 52%),
+        radial-gradient(1px 1px at 41% 83%, rgba(255, 255, 255, .14) 50%, transparent 52%),
+        radial-gradient(1px 1px at 56% 18%, rgba(255, 255, 255, .16) 50%, transparent 52%),
+        radial-gradient(1px 1px at 63% 66%, rgba(255, 255, 255, .14) 50%, transparent 52%),
+        radial-gradient(1px 1px at 78% 42%, rgba(255, 255, 255, .16) 50%, transparent 52%),
+        radial-gradient(1px 1px at 90% 78%, rgba(255, 255, 255, .14) 50%, transparent 52%);
+      opacity: .55;
+      filter: blur(.15px);
+    }
+
+    /* Sidebar Navigation */
+    .dashboard-sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: var(--navW);
+      height: 100vh;
+      padding: calc(12px + env(safe-area-inset-top)) 14px 14px max(14px, env(safe-area-inset-left));
+      z-index: 1000;
+    }
+
+    .sideCard {
+      height: calc(100vh - (12px + env(safe-area-inset-top)) - 14px);
+      border-radius: 26px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .04));
+      border: 1px solid var(--stroke);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 14px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, .10);
+    }
+
+    .brandMark {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 auto;
+      border-radius: 12px;
+      background: radial-gradient(18px 18px at 30% 25%, rgba(110, 199, 255, .75), rgba(110, 199, 255, 0) 65%),
+        radial-gradient(18px 18px at 75% 75%, rgba(74, 236, 220, .70), rgba(74, 236, 220, 0) 60%),
+        rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .14);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .35);
+    }
+
+    .brand h1 {
+      font-size: 14px;
+      margin: 0;
+      letter-spacing: .2px;
+      color: var(--text);
+    }
+
+    .brand p {
+      margin: 0;
+      font-size: 12px;
+      color: rgba(255, 255, 255, .48);
+    }
+
+    .nav {
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow: auto;
+      flex: 1;
+    }
+
+    .nav a {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 14px;
+      color: var(--muted);
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .nav a:hover {
+      background: rgba(255, 255, 255, .05);
+      color: rgba(255, 255, 255, .86);
+      border-color: rgba(255, 255, 255, .08);
+    }
+
+    .nav a.active {
+      background: linear-gradient(90deg, rgba(110, 199, 255, .18), rgba(74, 236, 220, .10));
+      color: rgba(255, 255, 255, .92);
+      border-color: rgba(110, 199, 255, .22);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, .22);
+    }
+
+    .navIcon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      opacity: .95;
+    }
+
+    .navFooter {
+      margin-top: auto;
+      padding: 10px 12px 14px;
+      border-top: 1px solid rgba(255, 255, 255, .10);
+    }
+
+    /* Main Content */
+    .dashboard-main {
+      margin-left: var(--navW);
+      min-height: 100vh;
+      padding: calc(14px + env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) calc(80px + 14px + env(safe-area-inset-bottom)) 14px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .045));
+      border: 1px solid var(--stroke);
+      border-radius: 24px;
+      margin-bottom: 3rem;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .45);
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--cyan), var(--teal));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 20px;
+      margin: 2rem 0;
+      border: 1px solid rgba(255, 255, 255, .12);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, rgba(110, 199, 255, .22), rgba(110, 199, 255, .10));
+      border: 1px solid rgba(110, 199, 255, .28);
+      color: rgba(255, 255, 255, .95);
+      text-decoration: none;
+      font-weight: 600;
+      margin: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      border-color: rgba(110, 199, 255, .40);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, .34);
+    }
+
+    /* Mobile Bottom Navigation */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .04));
+      border-top: 1px solid rgba(255, 255, 255, .12);
+      backdrop-filter: blur(18px);
+      z-index: 1000;
+      padding: 0 max(14px, env(safe-area-inset-left)) calc(env(safe-area-inset-bottom) + 8px) max(14px, env(safe-area-inset-right));
+    }
+
+    .mobile-nav-items {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      height: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      color: rgba(255, 255, 255, .64);
+      transition: all 0.2s ease;
+      flex: 1;
+      padding: 8px;
+    }
+
+    .mobile-nav-item.active {
+      color: var(--cyan);
+    }
+
+    .mobile-nav-item svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .mobile-nav-item span {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    /* Mobile Burger */
+    .mobile-burger {
+      display: none;
+      position: fixed;
+      top: calc(12px + env(safe-area-inset-top));
+      left: max(14px, env(safe-area-inset-left));
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, .14);
+      background: rgba(255, 255, 255, .06);
+      z-index: 1001;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .mobile-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .52);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 999;
+    }
+
+    .mobile-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 860px) {
+      .dashboard-sidebar {
+        transform: translateX(-110%);
+        transition: transform .24s ease;
+      }
+
+      .dashboard-sidebar.show {
+        transform: translateX(0);
+      }
+
+      .dashboard-main {
+        margin-left: 0;
+        padding-bottom: calc(90px + env(safe-area-inset-bottom));
+      }
+
+      .mobile-bottom-nav {
+        display: block;
+      }
+
+      .mobile-burger {
+        display: grid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sidebar Navigation -->
+  <aside class="dashboard-sidebar" id="dashboardSidebar">
+    <div class="sideCard">
+      <div class="brand">
+        <div class="brandMark">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M4 18V6.8c0-.6.7-1 1.2-.6l6.8 5.2 6.8-5.2c.5-.4 1.2 0 1.2.6V18" stroke="rgba(255,255,255,.92)"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M4 18c0-3.5 2.8-6.3 6.3-6.3h3.4C17.2 11.7 20 14.5 20 18" stroke="rgba(110,199,255,.95)"
+              stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div>
+          <h1>Meauxbility</h1>
+          <p>MeauxStack OS</p>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="/dashboard" class="nav-link">
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none">
+            <path d="M4 13h7V4H4v9ZM13 20h7V11h-7v9ZM4 20h7v-5H4v5ZM13 9h7V4h-7v5Z" stroke="currentColor"
+              stroke-width="1.8" stroke-linejoin="round" />
+          </svg>
+          Dashboard
+        </a>
+        <a href="/dashboard/apps" class="nav-link">
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none">
+            <path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" stroke="currentColor"
+              stroke-width="1.8" />
+            <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          App Library
+        </a>
+        <a href="/dashboard/discover" class="nav-link active">
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+            <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+          </svg>
+          Discover
+        </a>
+        <a href="/dashboard/galaxy" class="nav-link">
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2.6 19.2 6.7v10.6L12 21.4 4.8 17.3V6.7L12 2.6Z" stroke="currentColor" stroke-width="1.8"
+              stroke-linejoin="round" />
+            <path d="M8.5 10.2c1.1-1.8 2.3-2.5 3.5-2.5 1.3 0 2.5.8 3.5 2.5-.9 1.8-2.2 2.7-3.5 2.7s-2.6-.9-3.5-2.7Z"
+              stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+          </svg>
+          AI Gateway
+        </a>
+        <a href="/dashboard/dev/sql" class="nav-link">
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none">
+            <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          SQL Editor
+        </a>
+        <a href="/dashboard/dev/tools" class="nav-link">
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"
+              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          Dev Tools
+        </a>
+        <a href="/dashboard/storage/r2" class="nav-link">
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none">
+            <path d="M6 7c0-2 3-3 6-3s6 1 6 3-3 3-6 3-6-1-6-3Z" stroke="currentColor" stroke-width="1.8" />
+            <path d="M6 7v5c0 2 3 3 6 3s6-1 6-3V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+          Storage
+        </a>
+        <a href="/dashboard/settings" class="nav-link">
+          <svg class="navIcon" viewBox="0 0 24 24" fill="none">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.8" />
+            <path
+              d="M19 12a7.1 7.1 0 0 0-.1-1l2-1.6-2-3.4-2.4 1a7.5 7.5 0 0 0-1.7-1l-.4-2.6H9.6L9.2 6a7.5 7.5 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.6A7.1 7.1 0 0 0 5 12c0 .3 0 .7.1 1l-2 1.6 2 3.4 2.4-1c.5.4 1.1.7 1.7 1l.4 2.6h4.8l.4-2.6c.6-.3 1.2-.6 1.7-1l2.4 1 2-3.4-2-1.6c.1-.3.1-.7.1-1Z"
+              stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+          </svg>
+          Settings
+        </a>
+      </nav>
+
+      <div class="navFooter">
+        <a href="/"
+          style="display: flex; align-items: center; gap: 8px; padding: 9px 10px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.80); font-size: 12px; text-decoration: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="1.8" />
+            <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="1.8" />
+          </svg>
+          Back to Home
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <!-- Mobile Burger -->
+  <button class="mobile-burger" id="mobileBurger" aria-label="Open navigation">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M5 7h14M5 12h14M5 17h10" stroke="rgba(255,255,255,.92)" stroke-width="2" stroke-linecap="round" />
+    </svg>
+  </button>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <div class="container">
+      <div class="hero">
+        <h1>Discover & Deploy</h1>
+        <p style="font-size: 1.2rem; opacity: 0.8; margin-bottom: 2rem;">Launch your projects with ease</p>
+        <img src="/assets/thumbnails/discover_and_deploy_png-32e38fbc-ebbb-4914-87d6-efad9a01fc0a.png"
+          alt="Discover & Deploy" class="hero-img">
+        <div style="margin-top: 2rem;">
+          <a href="/dashboard/deploy" class="btn">Start a Build</a>
+          <a href="#" class="btn" style="background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.14);">View
+            Docs</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+    <div class="mobile-nav-items">
+      <a href="/dashboard" class="mobile-nav-item">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M4 13h7V4H4v9ZM13 20h7V11h-7v9ZM4 20h7v-5H4v5ZM13 9h7V4h-7v5Z" stroke="currentColor" stroke-width="2"
+            stroke-linejoin="round" />
+        </svg>
+        <span>Home</span>
+      </a>
+      <a href="/dashboard/apps" class="mobile-nav-item">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" stroke="currentColor"
+            stroke-width="2" />
+          <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span>Apps</span>
+      </a>
+      <a href="/dashboard/discover" class="mobile-nav-item active">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+          <path d="M2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+        </svg>
+        <span>Discover</span>
+      </a>
+      <a href="/dashboard/settings" class="mobile-nav-item">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="2" />
+          <path
+            d="M19 12a7.1 7.1 0 0 0-.1-1l2-1.6-2-3.4-2.4 1a7.5 7.5 0 0 0-1.7-1l-.4-2.6H9.6L9.2 6a7.5 7.5 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.6A7.1 7.1 0 0 0 5 12c0 .3 0 .7.1 1l-2 1.6 2 3.4 2.4-1c.5.4 1.1.7 1.7 1l.4 2.6h4.8l.4-2.6c.6-.3 1.2-.6 1.7-1l2.4 1 2-3.4-2-1.6c.1-.3.1-.7.1-1Z"
+            stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+        </svg>
+        <span>Settings</span>
+      </a>
+    </div>
+  </nav>
+
+  <script>
+    const burger = document.getElementById('mobileBurger');
+    const sidebar = document.getElementById('dashboardSidebar');
+    const overlay = document.getElementById('mobileOverlay');
+
+    function openNav() {
+      sidebar.classList.add('show');
+      overlay.classList.add('show');
+    }
+
+    function closeNav() {
+      sidebar.classList.remove('show');
+      overlay.classList.remove('show');
+    }
+
+    burger?.addEventListener('click', openNav);
+    overlay?.addEventListener('click', closeNav);
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeNav();
+    });
+  </script>
+</body>
+
+</html>
